@@ -47,6 +47,7 @@ function App() {
       <LoginPage
         setIsLoggedIn={setIsLoggedIn}
         setToken={setToken}
+        onBackToLanding={() => setShowLanding(true)}
       />
     );
   }

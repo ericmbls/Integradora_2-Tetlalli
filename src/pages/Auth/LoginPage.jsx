@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function LoginPage({ setIsLoggedIn }) {
+export default function LoginPage({ setIsLoggedIn, onBackToLanding }) {
   const navigate = useNavigate();
   const [isLoginActive, setIsLoginActive] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -174,7 +174,13 @@ export default function LoginPage({ setIsLoggedIn }) {
   return (
     <div className="h-screen flex items-center justify-center bg-gradient-to-br from-[#fef7e9] to-[#fef0e0] relative overflow-hidden font-sans">
       <button 
-        onClick={() => navigate('/')}
+        onClick={() => {
+          if (onBackToLanding) {
+            onBackToLanding();
+          } else {
+            navigate('/');
+          }
+        }}
         className="absolute top-6 left-6 z-50 flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md rounded-full text-[#a57c5a] font-semibold shadow-sm hover:shadow-md hover:bg-white transition-all duration-300 group"
       >
         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform duration-300" />
