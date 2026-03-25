@@ -21,12 +21,15 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
+    const adminSecret = process.env.ADMIN_SECRET_KEY || 'TETLALLI_2026';
+    const userRole = dto.adminCode === adminSecret ? Role.admin : Role.user;
+
     const user = await this.prisma.user.create({
       data: {
         name: dto.name,
         email: dto.email,
         password: hashedPassword,
-        role: Role.user,
+        role: userRole,
         darkMode: false,
       },
     });

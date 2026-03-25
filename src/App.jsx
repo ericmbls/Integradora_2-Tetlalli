@@ -9,17 +9,16 @@ import Sidebar from './components/common/Sidebar';
 import Header from './components/common/Header';
 import LandingPage from './pages/Landing/LandingPage';
 import CultivoDetallePage from "./pages/Cultivos/CultivoDetallePage";
+import { useAuth } from './context/AuthContext';
 import './App.css';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
   const [showLanding, setShowLanding] = useState(true);
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [selectedCultivo, setSelectedCultivo] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [userRole] = useState('admin');
   const [darkMode, setDarkMode] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
 
   useEffect(() => {
     if (darkMode) {
@@ -38,15 +37,13 @@ function App() {
     ajustes: { component: AjustesPage, title: 'Ajustes', showButton: false }
   };
 
-  if (showLanding && !isLoggedIn) {
+  if (showLanding && !isAuthenticated) {
     return <LandingPage onLoginClick={() => setShowLanding(false)} />;
   }
 
-  if (!isLoggedIn) {
+  if (!isAuthenticated) {
     return (
       <LoginPage
-        setIsLoggedIn={setIsLoggedIn}
-        setToken={setToken}
         onBackToLanding={() => setShowLanding(true)}
       />
     );
@@ -62,11 +59,10 @@ function App() {
           setCurrentPage(page);
           setIsSidebarOpen(false);
         }}
-        role={userRole}
+        role={user?.role}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
         onLogout={() => {
-          setIsLoggedIn(false);
           setShowLanding(false); // Make sure we hit the Login view, not Landing
         }}
       />
@@ -87,7 +83,6 @@ function App() {
           <CurrentPage
             darkMode={darkMode}
             setDarkMode={setDarkMode}
-            token={token}
             cultivo={selectedCultivo}
             onOpenCultivo={(cultivo) => {
               setSelectedCultivo(cultivo);

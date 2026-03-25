@@ -13,7 +13,8 @@ export default function LoginPage({ setIsLoggedIn, onBackToLanding }) {
   const [formData, setFormData] = useState({
     nombre: "",
     email: "",
-    password: ""
+    password: "",
+    adminCode: ""
   });
   const [isAnimating, setIsAnimating] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
@@ -127,7 +128,8 @@ export default function LoginPage({ setIsLoggedIn, onBackToLanding }) {
         const res = await registerUsuario({
           name: formData.nombre,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          adminCode: formData.adminCode
         });
         login(res.access_token, res.user);
         setIsLoggedIn(true);
@@ -149,7 +151,7 @@ export default function LoginPage({ setIsLoggedIn, onBackToLanding }) {
     setIsAnimating(true);
     setTimeout(() => {
       setIsLoginActive(!isLoginActive);
-      setFormData({ nombre: "", email: "", password: "" });
+      setFormData({ nombre: "", email: "", password: "", adminCode: "" });
       setErrorMessage("");
       setFieldErrors({ nombre: "", email: "", password: "" });
       setTimeout(() => setIsAnimating(false), 50);
@@ -395,6 +397,19 @@ export default function LoginPage({ setIsLoggedIn, onBackToLanding }) {
                   {fieldErrors.password && (
                     <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>
                   )}
+                </div>
+
+                <div className="flex flex-col mb-4">
+                  <label className="text-xs mb-1 text-[#a57c5a] font-medium">¿Código de Administrador? (Opcional)</label>
+                  <input
+                    type="password"
+                    name="adminCode"
+                    value={formData.adminCode}
+                    onChange={handleInputChange}
+                    disabled={loading}
+                    placeholder="Escribe el código secreto"
+                    className="p-3 rounded-lg border border-[#e2d5c8] hover:border-[#c49a6c] text-sm bg-[#fffbf5] focus:outline-none focus:ring-2 focus:ring-[#c49a6c] focus:border-transparent transition-all duration-300"
+                  />
                 </div>
 
                 <button
