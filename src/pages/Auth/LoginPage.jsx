@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-export default function LoginPage({ setIsLoggedIn, onBackToLanding }) {
+export default function LoginPage({ onBackToLanding }) {
   const navigate = useNavigate();
   const [isLoginActive, setIsLoginActive] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -123,7 +123,6 @@ export default function LoginPage({ setIsLoggedIn, onBackToLanding }) {
           password: formData.password
         });
         login(res.access_token, res.user);
-        setIsLoggedIn(true);
       } else {
         const res = await registerUsuario({
           name: formData.nombre,
@@ -132,7 +131,6 @@ export default function LoginPage({ setIsLoggedIn, onBackToLanding }) {
           adminCode: formData.adminCode
         });
         login(res.access_token, res.user);
-        setIsLoggedIn(true);
       }
     } catch (error) {
       setErrorMessage(
