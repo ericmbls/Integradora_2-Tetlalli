@@ -14,7 +14,6 @@ import {
   BarChart3,
   Activity,
   Check,
-  Wind,
   Gauge,
   ArrowUp,
   ArrowDown,
@@ -42,26 +41,16 @@ export default function DashboardPage() {
   const [zonasCultivo, setZonasCultivo] = useState([]);
   const [actividad, setActividad] = useState([]);
   const [cultivosRecientes, setCultivosRecientes] = useState([]);
-  const [cultivosPorTipo, setCultivosPorTipo] = useState([]);
   const [actividadesPendientes, setActividadesPendientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hoveredZone, setHoveredZone] = useState(null);
-
-  const pronostico = [
-    { day: "Lun", icon: <Sun size={20} className="text-amber-500" />, temp: "24°", max: 26, min: 18 },
-    { day: "Mar", icon: <CloudSun size={20} className="text-stone-500" />, temp: "22°", max: 24, min: 16 },
-    { day: "Mié", icon: <CloudRain size={20} className="text-stone-500" />, temp: "20°", max: 22, min: 15 },
-    { day: "Jue", icon: <Sun size={20} className="text-amber-500" />, temp: "23°", max: 25, min: 17 },
-    { day: "Vie", icon: <Sun size={20} className="text-amber-500" />, temp: "25°", max: 27, min: 19 }
-  ];
 
   useEffect(() => {
     const fetchCultivos = async () => {
       setLoading(true);
       setError(null);
       try {
-        
         const API_URL = import.meta.env.VITE_API_URL;
         const data = await fetchWithAuth(`${API_URL}/api/cultivos`);
 
@@ -109,14 +98,6 @@ export default function DashboardPage() {
           }))
         );
 
-        const conteoTipos = {};
-        data.forEach(c => {
-          const tipo = c.tipo || "Sin tipo";
-          conteoTipos[tipo] = (conteoTipos[tipo] || 0) + 1;
-        });
-
-        setCultivosPorTipo(Object.entries(conteoTipos).map(([tipo, total]) => ({ tipo, total })));
-
         const actividades = [
           { id: 1, tarea: "Riego programado - Zona Norte", fecha: "Hoy, 10:00 AM", completada: false, prioridad: "alta" },
           { id: 2, tarea: "Fertilización - Cultivo de maíz", fecha: "Mañana, 8:30 AM", completada: false, prioridad: "media" },
@@ -152,8 +133,6 @@ export default function DashboardPage() {
     };
     return colors[prioridad] || "bg-gray-100 text-gray-600";
   };
-
-  const maxTipo = cultivosPorTipo.length ? Math.max(...cultivosPorTipo.map(t => t.total)) : 1;
 
   if (loading) {
     return (
@@ -235,8 +214,8 @@ export default function DashboardPage() {
         ))}
       </section>
 
-      <section className="grid md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 animate-slideUp">
+      <section className="grid md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 animate-slideUp">
           <div className="flex items-center justify-between mb-5">
             <h3 className="font-semibold flex items-center gap-2 text-gray-800">
               <div className="p-1.5 bg-[#8B6F47]/10 rounded-lg">
@@ -292,42 +271,9 @@ export default function DashboardPage() {
         <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 animate-slideUp">
           <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-800">
             <div className="p-1.5 bg-[#8B6F47]/10 rounded-lg">
-              <CloudSun size={18} className="text-[#8B6F47]" />
-            </div>
-            Pronóstico 5 días
-          </h3>
-          <div className="space-y-3">
-            {pronostico.map((day, idx) => (
-              <div 
-                key={day.day} 
-                className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0 hover:bg-gray-50/50 px-2 rounded-lg transition-all duration-300"
-                style={{ animationDelay: `${idx * 50}ms` }}
-              >
-                <span className="font-medium text-gray-600 w-8">{day.day}</span>
-                <div className="flex gap-2 items-center">{day.icon}</div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">{day.min}°</span>
-                  <div className="w-12 h-1 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full"
-                      style={{ width: `${((day.max - 15) / 20) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-semibold text-gray-700">{day.temp}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="grid md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 animate-slideUp">
-          <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-800">
-            <div className="p-1.5 bg-[#8B6F47]/10 rounded-lg">
               <TrendingUp size={18} className="text-[#8B6F47]" />
             </div>
-            Recientes
+            Cultivos recientes
           </h3>
           <div className="space-y-3">
             {cultivosRecientes.map((c, idx) => (
@@ -342,9 +288,11 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
+      </section>
 
+      <section className="grid md:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 animate-slideUp">
-          <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-800">
+          <h3 className="font-semibold flex items-center gap-2 mb-5 text-gray-800">
             <div className="p-1.5 bg-[#8B6F47]/10 rounded-lg">
               <Clock size={18} className="text-[#8B6F47]" />
             </div>
@@ -365,42 +313,11 @@ export default function DashboardPage() {
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 animate-slideUp">
-          <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-800">
-            <div className="p-1.5 bg-[#8B6F47]/10 rounded-lg">
-              <Gauge size={18} className="text-[#8B6F47]" />
-            </div>
-            Distribución por tipo
-          </h3>
-          <div className="space-y-3">
-            {cultivosPorTipo.map((t, idx) => (
-              <div 
-                key={t.tipo} 
-                className="group"
-                style={{ animationDelay: `${idx * 50}ms` }}
-              >
-                <div className="flex justify-between items-center gap-2 mb-1">
-                  <span className="text-sm text-gray-600">{t.tipo}</span>
-                  <span className="text-sm font-semibold text-[#8B6F47]">{t.total}</span>
-                </div>
-                <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                  <div 
-                    style={{ width: `${(t.total / maxTipo) * 100}%` }} 
-                    className="h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-[#8B6F47] to-[#9b7f57] group-hover:opacity-80"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="grid md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 animate-slideUp">
           <h3 className="font-semibold flex items-center gap-2 mb-5 text-gray-800">
             <div className="p-1.5 bg-[#8B6F47]/10 rounded-lg">
               <Calendar size={18} className="text-[#8B6F47]" />
             </div>
-            Próximas Actividades
+            Actividades pendientes
           </h3>
           <div className="space-y-3">
             {actividadesPendientes.filter(act => !act.completada).map((act, idx) => (
@@ -444,43 +361,43 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+      </section>
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 animate-slideUp">
-          <h3 className="font-semibold flex items-center gap-2 mb-5 text-gray-800">
-            <div className="p-1.5 bg-green-100 rounded-lg">
-              <Check size={18} className="text-green-600" />
-            </div>
-            Actividades Completadas
-          </h3>
-          <div className="space-y-3">
-            {actividadesPendientes.filter(act => act.completada).map((act, idx) => (
-              <div 
-                key={act.id} 
-                className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-transparent rounded-xl transition-all duration-300"
-                style={{ animationDelay: `${idx * 50}ms` }}
-              >
-                <div className="w-11 h-11 bg-green-100 rounded-xl flex items-center justify-center">
-                  <Check size={18} className="text-green-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-500 line-through">{act.tarea}</p>
-                  <p className="text-xs text-gray-400 flex items-center gap-1 mt-1">
-                    <Calendar size={10} />
-                    {act.fecha}
-                  </p>
-                </div>
-              </div>
-            ))}
-            {actividadesPendientes.filter(act => act.completada).length === 0 && (
-              <div className="text-center py-10">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Wind size={28} className="text-gray-400" />
-                </div>
-                <p className="text-gray-400">No hay actividades completadas</p>
-                <p className="text-xs text-gray-400 mt-1">Completa actividades para verlas aquí</p>
-              </div>
-            )}
+      <section className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-xl transition-all duration-500 animate-slideUp">
+        <h3 className="font-semibold flex items-center gap-2 mb-5 text-gray-800">
+          <div className="p-1.5 bg-green-100 rounded-lg">
+            <Check size={18} className="text-green-600" />
           </div>
+          Actividades completadas
+        </h3>
+        <div className="space-y-3">
+          {actividadesPendientes.filter(act => act.completada).map((act, idx) => (
+            <div 
+              key={act.id} 
+              className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-transparent rounded-xl transition-all duration-300"
+              style={{ animationDelay: `${idx * 50}ms` }}
+            >
+              <div className="w-11 h-11 bg-green-100 rounded-xl flex items-center justify-center">
+                <Check size={18} className="text-green-600" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-500 line-through">{act.tarea}</p>
+                <p className="text-xs text-gray-400 flex items-center gap-1 mt-1">
+                  <Calendar size={10} />
+                  {act.fecha}
+                </p>
+              </div>
+            </div>
+          ))}
+          {actividadesPendientes.filter(act => act.completada).length === 0 && (
+            <div className="text-center py-10">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Gauge size={28} className="text-gray-400" />
+              </div>
+              <p className="text-gray-400">No hay actividades completadas</p>
+              <p className="text-xs text-gray-400 mt-1">Completa actividades para verlas aquí</p>
+            </div>
+          )}
         </div>
       </section>
 

@@ -2,10 +2,12 @@ import { LayoutDashboard, Sprout, BarChart3, Users, Settings, ChevronLeft, LogOu
 import logo from '../../assets/logo.png';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function Sidebar({ currentPage, onNavigate, role = 'admin', isOpen, onClose, onLogout }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const menu = [
     { id: 'dashboard', label: 'Inicio', icon: <LayoutDashboard size={20} /> },
@@ -18,6 +20,12 @@ export default function Sidebar({ currentPage, onNavigate, role = 'admin', isOpe
   }
 
   menu.push({ id: 'ajustes', label: 'Ajustes', icon: <Settings size={20} /> });
+
+  const handleLogout = () => {
+    logout();
+    if (onLogout) onLogout();
+    setShowLogoutConfirm(false);
+  };
 
   const sidebarClasses = `
     fixed lg:static inset-y-0 left-0 z-50
@@ -67,7 +75,6 @@ export default function Sidebar({ currentPage, onNavigate, role = 'admin', isOpe
 
   return (
     <>
-      {/* Overlay con blur mejorado para móvil */}
       {isOpen && (
         <div 
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden animate-fadeIn"
@@ -126,10 +133,7 @@ export default function Sidebar({ currentPage, onNavigate, role = 'admin', isOpe
               <span className={userRoleClasses}>{user?.role || "Usuario"}</span>
             </div>
             <button 
-              onClick={() => {
-                logout();
-                if (onLogout) onLogout();
-              }}
+              onClick={() => setShowLogoutConfirm(true)}
               className="ml-auto p-2 hover:bg-black/5 rounded-lg transition-colors group"
               title="Cerrar sesión"
             >
@@ -138,6 +142,36 @@ export default function Sidebar({ currentPage, onNavigate, role = 'admin', isOpe
           </div>
         </div>
       </aside>
+
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-2xl p-6 max-w-sm mx-4 shadow-xl transform animate-scaleIn">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-red-100 rounded-full">
+                <LogOut size={24} className="text-red-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Cerrar sesión</h3>
+            </div>
+            <p className="text-gray-600 mb-6">
+              ¿Estás seguro de que deseas cerrar sesión?
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes fadeIn {
@@ -149,8 +183,23 @@ export default function Sidebar({ currentPage, onNavigate, role = 'admin', isOpe
           }
         }
         
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        
         .animate-fadeIn {
           animation: fadeIn 0.25s ease-out forwards;
+        }
+        
+        .animate-scaleIn {
+          animation: scaleIn 0.2s ease-out forwards;
         }
       `}</style>
     </>
