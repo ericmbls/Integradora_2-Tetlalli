@@ -78,7 +78,7 @@ export default function Sidebar({ currentPage, onNavigate, role = 'admin', isOpe
       <aside className={sidebarClasses}>
         <div className="flex items-center gap-3 mb-10">
           <img src={logo} alt="Tetlalli" className="w-[38px] h-[38px] rounded-xl object-cover" />
-          <h1 className={headerTitleClasses}>Tetlalli</h1>
+          <h1 className={headerTitleClasses}>{user?.farmName || "Tetlalli"}</h1>
           <button
             onClick={onClose}
             className="absolute top-8 right-4 p-2 lg:hidden hover:bg-black/5 rounded-lg transition-colors"

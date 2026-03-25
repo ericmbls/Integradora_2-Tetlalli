@@ -31,6 +31,8 @@ export class AuthService {
         password: hashedPassword,
         role: userRole,
         darkMode: false,
+        farmName: 'Tetlalli - Huerto Escolar UTT',
+        location: 'Tlaxcala, México',
       },
     });
 
