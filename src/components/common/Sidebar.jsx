@@ -1,9 +1,11 @@
-import { LayoutDashboard, Sprout, BarChart3, Users, Settings, ChevronLeft, LogOut } from 'lucide-react';
+import { LayoutDashboard, Sprout, BarChart3, Users, Settings, ChevronLeft, LogOut, Home } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function Sidebar({ currentPage, onNavigate, role = 'admin', isOpen, onClose }) {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const menu = [
     { id: 'dashboard', label: 'Inicio', icon: <LayoutDashboard size={20} /> },
@@ -112,6 +114,17 @@ export default function Sidebar({ currentPage, onNavigate, role = 'admin', isOpe
               )}
             </button>
           ))}
+
+          <div className="my-2 border-t border-[rgba(139,111,71,0.1)]"></div>
+          <button
+            onClick={() => navigate('/')}
+            className={navItemClasses(false)}
+          >
+            <span className="flex items-center transition-colors text-gray-400">
+              <Home size={20} />
+            </span>
+            <span className="flex-1 text-left">Volver al Inicio</span>
+          </button>
         </nav>
 
         <div className={footerClasses}>

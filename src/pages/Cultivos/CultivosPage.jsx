@@ -430,7 +430,7 @@ export default function CultivosPage({ onOpenCultivo }) {
                       {cultivo.imagen ? (
                         <>
                           <img
-                            src={cultivo.imagen}
+                            src={cultivo.imagen.startsWith('http') ? cultivo.imagen : `http://localhost:3000${cultivo.imagen}`}
                             alt={cultivo.nombre}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                           />
@@ -460,14 +460,25 @@ export default function CultivosPage({ onOpenCultivo }) {
                         <h3 className="font-semibold text-gray-800 group-hover:text-[#8B6F47] transition-colors text-sm sm:text-base truncate">
                           {cultivo.nombre}
                         </h3>
-                        <div className="flex items-center gap-2 sm:gap-3 mt-1.5 sm:mt-2">
-                          <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-xs text-gray-500 bg-gray-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
-                            <Droplets size={10} className="sm:w-3 sm:h-3 text-blue-500" />
-                            <span>{cultivo.humedad || '—%'}</span>
+                        <div className="flex items-center gap-2 sm:gap-4 mt-2 sm:mt-3">
+                          <div className="flex-1 bg-gradient-to-r from-blue-50 to-blue-100/50 border border-blue-100 rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 flex items-center gap-1.5 sm:gap-2 shadow-[inset_0_1px_2px_rgba(255,255,255,0.8)]">
+                            <div className="p-1 sm:p-1.5 bg-white rounded-md shadow-sm">
+                               <Droplets size={12} className="sm:w-3.5 sm:h-3.5 text-blue-500" />
+                            </div>
+                            <div className="flex flex-col">
+                               <span className="text-[8px] sm:text-[9px] font-bold text-blue-400 uppercase tracking-wider leading-none">Humedad</span>
+                               <span className="text-[10px] sm:text-xs font-bold text-blue-700 leading-tight block mt-0.5">{cultivo.humedad || '45%'}</span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-xs text-gray-500 bg-gray-50 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
-                            <Thermometer size={10} className="sm:w-3 sm:h-3 text-orange-500" />
-                            <span>{cultivo.temperatura || '—°C'}</span>
+
+                          <div className="flex-1 bg-gradient-to-r from-orange-50 to-orange-100/50 border border-orange-100 rounded-lg px-2 sm:px-2.5 py-1.5 sm:py-2 flex items-center gap-1.5 sm:gap-2 shadow-[inset_0_1px_2px_rgba(255,255,255,0.8)]">
+                            <div className="p-1 sm:p-1.5 bg-white rounded-md shadow-sm">
+                               <Thermometer size={12} className="sm:w-3.5 sm:h-3.5 text-orange-500" />
+                            </div>
+                            <div className="flex flex-col">
+                               <span className="text-[8px] sm:text-[9px] font-bold text-orange-400 uppercase tracking-wider leading-none">Temp.</span>
+                               <span className="text-[10px] sm:text-xs font-bold text-orange-700 leading-tight block mt-0.5">{cultivo.temperatura || '24°C'}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
