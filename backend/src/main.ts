@@ -8,18 +8,29 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
   app.useGlobalPipes(
-  new ValidationPipe({
-    whitelist: true,
-    transform: true,
-    stopAtFirstError: true,
-  }),
-);
-  
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      stopAtFirstError: true,
+    }),
+  )
 
   app.setGlobalPrefix('api')
 
+  // Manejo dinámico de orígenes permitidos
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+    .split(',')
+    .map(o => o.trim())
+    .filter(o => o.length > 0)
+
   app.enableCors({
-    origin: process.env.FRONTEND_URL || '*',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true)
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`))
+      }
+    },
     credentials: true,
   })
 
